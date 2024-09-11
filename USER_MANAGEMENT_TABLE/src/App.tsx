@@ -1,62 +1,95 @@
-import { useState } from 'react';
-
-import './index.css';
-
+import React, { useEffect, useState } from 'react';
+import Table from 'react-bootstrap/Table';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import  useFetchUsers  from './data';
 
 function App() {
-const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
+  const [isLoading,setLoading]=useState(false)
+
+ 
+ 
+  const { getUsers } = useFetchUsers('https://jsonplaceholder.typicode.com/');
+
+  useEffect(() => {
+  setLoading(true);
+  getUsers('/users')
+    .then(data => {
+      setUsers(data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, []);
+
+
   return (
-    <>
-      <form action="">
-        <label htmlFor=""></label>
-        <input type="text" />
-        <input type="number" />
-        <button>Search</button>
-      </form>
-  <table id="example" className="table table-striped">
-        <thead>
+    <div>
+      <Container>
+        <h1 className='text-center mt-4'>User Management Table</h1>
+
+
+
+
+        <Form>
+          <InputGroup className='my-3'>
+
+            {/* onChange for search */}
+            <Form.Control
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder='Search contacts'
+            />
+          </InputGroup>
+        </Form>
+
+
+
+        <Table striped bordered hover>
+          <thead>
             <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
+              <th>First Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th></th>
             </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Tiger Nixon</td>
-                <td>System Architect</td>
-                <td>Edinburgh</td>
-                <td>61</td>
-                <td>2011-04-25</td>
-                <td>$320,800</td>
-            </tr>
-          
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </tfoot>
-      </table>
-      <nav aria-label="Page navigation example">
-  <ul  className="pagination">
-    <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-    <li className="page-item"><a className="page-link" href="#">1</a></li>
-    <li className="page-item"><a className="page-link" href="#">2</a></li>
-    <li className="page-item"><a className="page-link" href="#">3</a></li>
-    <li className="page-item"><a className="page-link" href="#">Next</a></li>
-  </ul>
-</nav>
-    </>
-  )
+          </thead>
+          <tbody>
+            {users
+              .filter((item) => {
+                return search.toLowerCase() === ''
+                  ? item
+                  : item.name.toLowerCase().includes(search);
+              })
+              .map(item => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.username}</td>
+                  <td>{item.email}</td>
+                  <td>{item.phone}</td>
+                  <td> <button type="button"
+                    className="btn-cookie btn-sm "
+                >
+                    <i className="fas fa-cookie"></i>
+                </button></td>
+                </tr>
+              ))}
+          </tbody>
+
+
+
+
+        </Table>
+      </Container>
+    </div>
+  );
 }
 
-export default App
+export default App;
