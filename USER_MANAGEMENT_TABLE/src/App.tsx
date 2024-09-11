@@ -1,7 +1,10 @@
+import { useState } from 'react';
+
 import './index.css';
 
-function App() {
 
+function App() {
+const [isLoading, setIsLoading] = useState(false);
   return (
     <>
       <form action="">
