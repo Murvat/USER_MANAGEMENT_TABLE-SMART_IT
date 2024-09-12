@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,45 +7,28 @@ import TableHead from './components/TableHead';
 import TableInfo from './components/TableInfo';
 import SearchPanel from './components/SearchPanel';
 import TableBody from './components/TableBody';
-import useFetchUsers from './gateway/useFetchUsers';
-
-interface User {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers, deleteUser } from './store/userSlice';
+import { RootState, AppDispatch } from './store/index';
 
 function App() {
-
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>(''); 
-
-  const { getUsers } = useFetchUsers('https://jsonplaceholder.typicode.com/');
+  const dispatch: AppDispatch = useDispatch();
+  const { users, loading } = useSelector((state: RootState) => state.users);
+  const [search, setSearch] = React.useState<string>('');
 
   useEffect(() => {
-    setLoading(true);
-    getUsers('/users')
-      .then((data: User[]) => {
-        setUsers(data);
-      })
-      .catch((err: any) => {
-        console.error(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   const handleSearch = (term: string) => {
     setSearch(term);
   };
 
+  const handleDelete = (id: number) => {
+    dispatch(deleteUser(id));
+  };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
         <Spinner animation="border" role="status">
@@ -63,8 +46,10 @@ function App() {
         <Table striped bordered hover>
           <TableHead />
           <TableBody
-            search={search} 
-            users={users} />
+            search={search}
+            users={users}
+            onDelete={handleDelete} 
+          />
         </Table>
       </Container>
     </div>
