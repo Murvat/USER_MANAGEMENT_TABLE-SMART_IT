@@ -45,9 +45,13 @@ function App() {
     }
   };
 
+
+
   const handleDelete = (id: number) => {
     dispatch(deleteUser(id));
   };
+
+
 
   if (loading) {
     return (
@@ -59,6 +63,7 @@ function App() {
     );
   }
 
+  
   return (
     <div>
       <Container>

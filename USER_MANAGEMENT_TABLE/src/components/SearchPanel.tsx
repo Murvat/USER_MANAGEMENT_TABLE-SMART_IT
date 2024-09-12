@@ -7,11 +7,14 @@ interface SearchPanelProps {
 }
 
 const SearchPanel: React.FC<SearchPanelProps> = ({ onSearch }) => {
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     onSearch(name, value);
   };
 
+  
   return (
     <Form>
       <InputGroup className="my-3">
