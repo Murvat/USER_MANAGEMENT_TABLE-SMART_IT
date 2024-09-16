@@ -41,6 +41,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearch }) => {
       </InputGroup>
     </Form>
   );
+  
 };
 
 export default SearchPanel;
